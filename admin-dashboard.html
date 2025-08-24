@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowwBizz Admin - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c7873; /* Teal */
+            --secondary-color: #6c5ce7; /* Purple */
+            --accent-color: #ff7675; /* Coral */
+            --dark-color: #2d3436; /* Dark Blue-Gray */
+            --light-color: #f5f6fa; /* Light Gray */
+            --text-color: #333333;
+            --text-light: #ffffff;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --sidebar-width: 250px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--dark-color);
+            color: var(--text-light);
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .logout-btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--accent-color);
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .logout-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            background-color: #f0f2f5;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+        
+        .view-site-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .view-site-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .view-site-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            display: none;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-header h3 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(44, 120, 115, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        /* Item List Styles */
+        .item-list {
+            margin-top: 20px;
+        }
+        
+        .item {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item-content h4 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .item-content p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .item-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .edit-btn {
+            color: var(--primary-color);
+        }
+        
+        .delete-btn {
+            color: var(--accent-color);
+        }
+        
+        .item-actions button:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Add Item Form */
+        .add-item-form {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Success Message */
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                overflow: visible;
+            }
+            
+            .sidebar-header h1,
+            .user-info,
+            .menu-item span,
+            .logout-btn span {
+                display: none;
+            }
+            
+            .menu-item i,
+            .logout-btn i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .view-site-btn {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>GrowwBizz</h1>
+            <div class="user-info" id="userInfo">Admin User</div>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-section="hero">
+                <i class="fas fa-home"></i>
+                <span>Hero Section</span>
+            </div>
+            <div class="menu-item" data-section="services">
+                <i class="fas fa-cogs"></i>
+                <span>Services</span>
+            </div>
+            <div class="menu-item" data-section="about">
+                <i class="fas fa-info-circle"></i>
+                <span>About Us</span>
+            </div>
+            <div class="menu-item" data-section="testimonials">
+                <i class="fas fa-quote-right"></i>
+                <span>Testimonials</span>
+            </div>
+            <div class="menu-item" data-section="contact">
+                <i class="fas fa-envelope"></i>
+                <span>Contact Info</span>
+            </div>
+            <div class="menu-item" data-section="footer">
+                <i class="fas fa-copyright"></i>
+                <span>Footer</span>
+            </div>
+        </div>
+        <div class="logout-btn" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h2>Admin Dashboard</h2>
+            </div>
+            <a href="index.html" class="view-site-btn" target="_blank">
+                <i class="fas fa-external-link-alt"></i> View Website
+            </a>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            Changes saved successfully! The website has been updated.
+        </div>
+
+        <!-- Dashboard Overview Section -->
+        <div class="content-section active" id="dashboard-section">
+            <div class="section-header">
+                <h3>Dashboard Overview</h3>
+            </div>
+            <p>Welcome to the GrowwBizz Admin Dashboard. Use the sidebar navigation to edit different sections of your website.</p>
+            <p>Changes you make here will be immediately reflected on your website.</p>
+            
+            <div style="margin-top: 30px;">
+                <h4 style="margin-bottom: 15px;">Quick Stats</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="background-color: var(--light-color); padding: 20px; border-radius: 10px; box-shadow: var(--box-shadow);">
+                        <i class="fas fa-cogs" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 10px;"></i>
+                        <h5>Services</h5>
+                        <p id="servicesCount">4 services</p>
+                    </div>
+                    <div style="background-color: var(--light-color); padding: 20px; border-radius: 10px; box-shadow: var(--box-shadow);">
+                        <i class="fas fa-quote-right" style="font-size: 2rem; color: var(--secondary-color); margin-bottom: 10px;"></i>
+                        <h5>Testimonials</h5>
+                        <p id="testimonialsCount">3 testimonials</p>
+                    </div>
+                    <div style="background-color: var(--light-color); padding: 20px; border-radius: 10px; box-shadow: var(--box-shadow);">
+                        <i class="fas fa-clock" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 10px;"></i>
+                        <h5>Last Updated</h5>
+                        <p id="lastUpdated">Just now</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Section Editor -->
+        <div class="content-section" id="hero-section">
+            <div class="section-header">
+                <h3>Edit Hero Section</h3>
+            </div>
+            <form id="heroForm">
+                <div class="form-group">
+                    <label for="heroTitle">Hero Title</label>
+                    <input type="text" id="heroTitle" name="heroTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="heroSubtitle">Hero Subtitle</label>
+                    <textarea id="heroSubtitle" name="heroSubtitle" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="heroButtonText">Button Text</label>
+                    <input type="text" id="heroButtonText" name="heroButtonText" required>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Services Section Editor -->
+        <div class="content-section" id="services-section">
+            <div class="section-header">
+                <h3>Edit Services Section</h3>
+            </div>
+            <div class="form-group">
+                <label for="servicesTitle">Section Title</label>
+                <input type="text" id="servicesTitle" name="servicesTitle" required>
+            </div>
+            <h4 style="margin: 20px 0 15px;">Service Items</h4>
+            <div class="item-list" id="servicesList">
+                <!-- Service items will be populated here -->
+            </div>
+            <div class="add-item-form">
+                <h4 style="margin-bottom: 15px;">Add New Service</h4>
+                <form id="addServiceForm">
+                    <div class="form-group">
+                        <label for="serviceIcon">Icon Class (FontAwesome)</label>
+                        <input type="text" id="serviceIcon" name="serviceIcon" placeholder="fas fa-chart-line" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceTitle">Service Title</label>
+                        <input type="text" id="serviceTitle" name="serviceTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceDescription">Service Description</label>
+                        <textarea id="serviceDescription" name="serviceDescription" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Add Service</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- About Section Editor -->
+        <div class="content-section" id="about-section">
+            <div class="section-header">
+                <h3>Edit About Section</h3>
+            </div>
+            <form id="aboutForm">
+                <div class="form-group">
+                    <label for="aboutTitle">Section Title</label>
+                    <input type="text" id="aboutTitle" name="aboutTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="aboutParagraph1">First Paragraph</label>
+                    <textarea id="aboutParagraph1" name="aboutParagraph1" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="aboutParagraph2">Second Paragraph</label>
+                    <textarea id="aboutParagraph2" name="aboutParagraph2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="aboutButtonText">Button Text</label>
+                    <input type="text" id="aboutButtonText" name="aboutButtonText" required>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Testimonials Section Editor -->
+        <div class="content-section" id="testimonials-section">
+            <div class="section-header">
+                <h3>Edit Testimonials Section</h3>
+            </div>
+            <div class="form-group">
+                <label for="testimonialsTitle">Section Title</label>
+                <input type="text" id="testimonialsTitle" name="testimonialsTitle" required>
+            </div>
+            <h4 style="margin: 20px 0 15px;">Testimonial Items</h4>
+            <div class="item-list" id="testimonialsList">
+                <!-- Testimonial items will be populated here -->
+            </div>
+            <div class="add-item-form">
+                <h4 style="margin-bottom: 15px;">Add New Testimonial</h4>
+                <form id="addTestimonialForm">
+                    <div class="form-group">
+                        <label for="testimonialQuote">Testimonial Quote</label>
+                        <textarea id="testimonialQuote" name="testimonialQuote" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialName">Client Name</label>
+                        <input type="text" id="testimonialName" name="testimonialName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialPosition">Client Position</label>
+                        <input type="text" id="testimonialPosition" name="testimonialPosition" required>
+                    </div>
+                    <button type="submit" class="btn">Add Testimonial</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Contact Section Editor -->
+        <div class="content-section" id="contact-section">
+            <div class="section-header">
+                <h3>Edit Contact Section</h3>
+            </div>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="contactTitle">Section Title</label>
+                    <input type="text" id="contactTitle" name="contactTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactAddress">Address</label>
+                    <input type="text" id="contactAddress" name="contactAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone">Phone Number</label>
+                    <input type="text" id="contactPhone" name="contactPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">Email Address</label>
+                    <input type="email" id="contactEmail" name="contactEmail" required>
+                </div>
+                <h4 style="margin: 20px 0 15px;">Social Media Links</h4>
+                <div class="form-group">
+                    <label for="socialFacebook">Facebook URL</label>
+                    <input type="text" id="socialFacebook" name="socialFacebook">
+                </div>
+                <div class="form-group">
+                    <label for="socialTwitter">Twitter URL</label>
+                    <input type="text" id="socialTwitter" name="socialTwitter">
+                </div>
+                <div class="form-group">
+                    <label for="socialLinkedin">LinkedIn URL</label>
+                    <input type="text" id="socialLinkedin" name="socialLinkedin">
+                </div>
+                <div class="form-group">
+                    <label for="socialInstagram">Instagram URL</label>
+                    <input type="text" id="socialInstagram" name="socialInstagram">
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Footer Section Editor -->
+        <div class="content-section" id="footer-section">
+            <div class="section-header">
+                <h3>Edit Footer Section</h3>
+            </div>
+            <form id="footerForm">
+                <div class="form-group">
+                    <label for="footerCopyright">Copyright Text</label>
+                    <input type="text" id="footerCopyright" name="footerCopyright" required>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            // Set user info
+            document.getElementById('userInfo').textContent = sessionStorage.getItem('userName') || 'Admin User';
+            
+            // Use window.db directly
+            const content = window.db;
+            
+            // Update dashboard stats
+            document.getElementById('servicesCount').textContent = `${content.services.items.length} services`;
+            document.getElementById('testimonialsCount').textContent = `${content.testimonials.items.length} testimonials`;
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+            
+            // Sidebar navigation
+            const menuItems = document.querySelectorAll('.menu-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all menu items
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked menu item
+                    this.classList.add('active');
+                    
+                    // Hide all content sections
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Show selected content section
+                    const sectionId = this.getAttribute('data-section');
+                    if (sectionId === 'dashboard') {
+                        document.getElementById('dashboard-section').classList.add('active');
+                    } else {
+                        document.getElementById(`${sectionId}-section`).classList.add('active');
+                    }
+                });
+            });
+            
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                sessionStorage.removeItem('loggedIn');
+                sessionStorage.removeItem('userName');
+                window.location.href = 'admin-login.html';
+            });
+            
+            // Success message functionality
+            function showSuccessMessage() {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.classList.add('show');
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 3000);
+                
+                // Update last updated time
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+            }
+            
+            // Populate form fields with current content
+            function populateFormFields() {
+                // Hero section
+                document.getElementById('heroTitle').value = content.hero.title;
+                document.getElementById('heroSubtitle').value = content.hero.subtitle;
+                document.getElementById('heroButtonText').value = content.hero.buttonText;
+                
+                // Services section
+                document.getElementById('servicesTitle').value = content.services.title;
+                populateServicesList();
+                
+                // About section
+                document.getElementById('aboutTitle').value = content.about.title;
+                document.getElementById('aboutParagraph1').value = content.about.paragraphs[0];
+                document.getElementById('aboutParagraph2').value = content.about.paragraphs[1];
+                document.getElementById('aboutButtonText').value = content.about.buttonText;
+                
+                // Testimonials section
+                document.getElementById('testimonialsTitle').value = content.testimonials.title;
+                populateTestimonialsList();
+                
+                // Contact section
+                document.getElementById('contactTitle').value = content.contact.title;
+                document.getElementById('contactAddress').value = content.contact.address;
+                document.getElementById('contactPhone').value = content.contact.phone;
+                document.getElementById('contactEmail').value = content.contact.email;
+                document.getElementById('socialFacebook').value = content.contact.social.facebook;
+                document.getElementById('socialTwitter').value = content.contact.social.twitter;
+                document.getElementById('socialLinkedin').value = content.contact.social.linkedin;
+                document.getElementById('socialInstagram').value = content.contact.social.instagram;
+                
+                // Footer section
+                document.getElementById('footerCopyright').value = content.footer.copyright;
+            }
+            
+            // Populate services list
+            function populateServicesList() {
+                const servicesList = document.getElementById('servicesList');
+                servicesList.innerHTML = '';
+                
+                content.services.items.forEach(service => {
+                    const serviceItem = document.createElement('div');
+                    serviceItem.className = 'item';
+                    serviceItem.innerHTML = `
+                        <div class="item-content">
+                            <h4>${service.title}</h4>
+                            <p>${service.description.substring(0, 50)}${service.description.length > 50 ? '...' : ''}</p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" data-id="${service.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" data-id="${service.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    servicesList.appendChild(serviceItem);
+                });
+                
+                // Add event listeners for edit and delete buttons
+                addServiceButtonListeners();
+            }
+            
+            // Add event listeners for service buttons
+            function addServiceButtonListeners() {
+                // Edit service
+                document.querySelectorAll('#servicesList .edit-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const serviceId = parseInt(this.getAttribute('data-id'));
+                        const service = content.services.items.find(item => item.id === serviceId);
+                        
+                        if (service) {
+                            // Populate form with service data
+                            document.getElementById('serviceIcon').value = service.icon;
+                            document.getElementById('serviceTitle').value = service.title;
+                            document.getElementById('serviceDescription').value = service.description;
+                            
+                            // Change form submit button text
+                            const submitButton = document.querySelector('#addServiceForm .btn');
+                            submitButton.textContent = 'Update Service';
+                            submitButton.setAttribute('data-id', serviceId);
+                        }
+                    });
+                });
+                
+                // Delete service
+                document.querySelectorAll('#servicesList .delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const serviceId = parseInt(this.getAttribute('data-id'));
+                        
+                        if (confirm('Are you sure you want to delete this service?')) {
+                            // Remove service from content
+                            content.services.items = content.services.items.filter(item => item.id !== serviceId);
+                            
+                            // Update UI
+                            populateServicesList();
+                            document.getElementById('servicesCount').textContent = `${content.services.items.length} services`;
+                            showSuccessMessage();
+                        }
+                    });
+                });
+            }
+            
+            // Populate testimonials list
+            function populateTestimonialsList() {
+                const testimonialsList = document.getElementById('testimonialsList');
+                testimonialsList.innerHTML = '';
+                
+                content.testimonials.items.forEach(testimonial => {
+                    const testimonialItem = document.createElement('div');
+                    testimonialItem.className = 'item';
+                    testimonialItem.innerHTML = `
+                        <div class="item-content">
+                            <h4>${testimonial.name}</h4>
+                            <p>${testimonial.quote.substring(0, 50)}${testimonial.quote.length > 50 ? '...' : ''}</p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" data-id="${testimonial.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-btn" data-id="${testimonial.id}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    
+                    testimonialsList.appendChild(testimonialItem);
+                });
+                
+                // Add event listeners for edit and delete buttons
+                addTestimonialButtonListeners();
+            }
+            
+            // Add event listeners for testimonial buttons
+            function addTestimonialButtonListeners() {
+                // Edit testimonial
+                document.querySelectorAll('#testimonialsList .edit-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const testimonialId = parseInt(this.getAttribute('data-id'));
+                        const testimonial = content.testimonials.items.find(item => item.id === testimonialId);
+                        
+                        if (testimonial) {
+                            // Populate form with testimonial data
+                            document.getElementById('testimonialQuote').value = testimonial.quote;
+                            document.getElementById('testimonialName').value = testimonial.name;
+                            document.getElementById('testimonialPosition').value = testimonial.position;
+                            
+                            // Change form submit button text
+                            const submitButton = document.querySelector('#addTestimonialForm .btn');
+                            submitButton.textContent = 'Update Testimonial';
+                            submitButton.setAttribute('data-id', testimonialId);
+                        }
+                    });
+                });
+                
+                // Delete testimonial
+                document.querySelectorAll('#testimonialsList .delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const testimonialId = parseInt(this.getAttribute('data-id'));
+                        
+                        if (confirm('Are you sure you want to delete this testimonial?')) {
+                            // Remove testimonial from content
+                            content.testimonials.items = content.testimonials.items.filter(item => item.id !== testimonialId);
+                            
+                            // Update UI
+                            populateTestimonialsList();
+                            document.getElementById('testimonialsCount').textContent = `${content.testimonials.items.length} testimonials`;
+                            showSuccessMessage();
+                        }
+                    });
+                });
+            }
+            
+            // Form submission handlers
+            
+            // Hero form
+            document.getElementById('heroForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Update content
+                content.hero.title = document.getElementById('heroTitle').value;
+                content.hero.subtitle = document.getElementById('heroSubtitle').value;
+                content.hero.buttonText = document.getElementById('heroButtonText').value;
+                
+                // Update content
+                showSuccessMessage();
+            });
+            
+            // Add/Edit Service form
+            document.getElementById('addServiceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitButton = this.querySelector('.btn');
+                const isEditing = submitButton.hasAttribute('data-id');
+                
+                if (isEditing) {
+                    // Update existing service
+                    const serviceId = parseInt(submitButton.getAttribute('data-id'));
+                    const serviceIndex = content.services.items.findIndex(item => item.id === serviceId);
+                    
+                    if (serviceIndex !== -1) {
+                        content.services.items[serviceIndex] = {
+                            id: serviceId,
+                            icon: document.getElementById('serviceIcon').value,
+                            title: document.getElementById('serviceTitle').value,
+                            description: document.getElementById('serviceDescription').value
+                        };
+                    }
+                    
+                    // Reset button
+                    submitButton.textContent = 'Add Service';
+                    submitButton.removeAttribute('data-id');
+                } else {
+                    // Add new service
+                    const newId = content.services.items.length > 0 
+                        ? Math.max(...content.services.items.map(item => item.id)) + 1 
+                        : 1;
+                    
+                    content.services.items.push({
+                        id: newId,
+                        icon: document.getElementById('serviceIcon').value,
+                        title: document.getElementById('serviceTitle').value,
+                        description: document.getElementById('serviceDescription').value
+                    });
+                }
+                
+                // Update UI
+                this.reset();
+                populateServicesList();
+                document.getElementById('servicesCount').textContent = `${content.services.items.length} services`;
+                showSuccessMessage();
+            });
+            
+            // About form
+            document.getElementById('aboutForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Update content
+                content.about.title = document.getElementById('aboutTitle').value;
+                content.about.paragraphs = [
+                    document.getElementById('aboutParagraph1').value,
+                    document.getElementById('aboutParagraph2').value
+                ];
+                content.about.buttonText = document.getElementById('aboutButtonText').value;
+                
+                // Update content
+                showSuccessMessage();
+            });
+            
+            // Add/Edit Testimonial form
+            document.getElementById('addTestimonialForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitButton = this.querySelector('.btn');
+                const isEditing = submitButton.hasAttribute('data-id');
+                
+                if (isEditing) {
+                    // Update existing testimonial
+                    const testimonialId = parseInt(submitButton.getAttribute('data-id'));
+                    const testimonialIndex = content.testimonials.items.findIndex(item => item.id === testimonialId);
+                    
+                    if (testimonialIndex !== -1) {
+                        content.testimonials.items[testimonialIndex] = {
+                            id: testimonialId,
+                            quote: document.getElementById('testimonialQuote').value,
+                            name: document.getElementById('testimonialName').value,
+                            position: document.getElementById('testimonialPosition').value
+                        };
+                    }
+                    
+                    // Reset button
+                    submitButton.textContent = 'Add Testimonial';
+                    submitButton.removeAttribute('data-id');
+                } else {
+                    // Add new testimonial
+                    const newId = content.testimonials.items.length > 0 
+                        ? Math.max(...content.testimonials.items.map(item => item.id)) + 1 
+                        : 1;
+                    
+                    content.testimonials.items.push({
+                        id: newId,
+                        quote: document.getElementById('testimonialQuote').value,
+                        name: document.getElementById('testimonialName').value,
+                        position: document.getElementById('testimonialPosition').value
+                    });
+                }
+                
+                // Update UI
+                this.reset();
+                populateTestimonialsList();
+                document.getElementById('testimonialsCount').textContent = `${content.testimonials.items.length} testimonials`;
+                showSuccessMessage();
+            });
+            
+            // Contact form
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Update content
+                content.contact.title = document.getElementById('contactTitle').value;
+                content.contact.address = document.getElementById('contactAddress').value;
+                content.contact.phone = document.getElementById('contactPhone').value;
+                content.contact.email = document.getElementById('contactEmail').value;
+                content.contact.social = {
+                    facebook: document.getElementById('socialFacebook').value,
+                    twitter: document.getElementById('socialTwitter').value,
+                    linkedin: document.getElementById('socialLinkedin').value,
+                    instagram: document.getElementById('socialInstagram').value
+                };
+                
+                // Update content
+                showSuccessMessage();
+            });
+            
+            // Footer form
+            document.getElementById('footerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Update content
+                content.footer.copyright = document.getElementById('footerCopyright').value;
+                
+                // Show success message
+                showSuccessMessage();
+            });
+            
+            // Initialize form fields
+            populateFormFields();
+        });
+    </script>
+</body>
+</html>
